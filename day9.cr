@@ -17,6 +17,6 @@ def calculate(input)
   end
 end
 
-input = File.read("input.day9").lines.map &.split.map &.to_i
+input = File.read_lines("input.day9").map &.split.map &.to_i
 puts "part1: %s" % calculate(input, &.sum(&.last))
 puts "part2: %s" % calculate(input, &.reverse_each.reduce(0) { |acc, v| v.first - acc })
