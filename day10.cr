@@ -1,34 +1,5 @@
 require "bit_array"
 
-def neighbours(pos, map, dir)
-  case dir
-  when '|'
-    pos.up?(map) { |p| yield p }
-    pos.down?(map) { |p| yield p }
-  when '-'
-    pos.right?(map) { |p| yield p }
-    pos.left?(map) { |p| yield p }
-  when 'F'
-    pos.right?(map) { |p| yield p }
-    pos.down?(map) { |p| yield p }
-  when '7'
-    pos.left?(map) { |p| yield p }
-    pos.down?(map) { |p| yield p }
-  when 'J'
-    pos.left?(map) { |p| yield p }
-    pos.up?(map) { |p| yield p }
-  when 'L'
-    pos.right?(map) { |p| yield p }
-    pos.up?(map) { |p| yield p }
-  when 'S'
-    pos.left?(map) { |p| yield p }
-    pos.right?(map) { |p| yield p }
-    pos.up?(map) { |p| yield p }
-    pos.down?(map) { |p| yield p }
-  else raise "unreachable"
-  end
-end
-
 record(Pos, x : Int32, y : Int32) do
   macro dir(name, x, y, includes)
     def {{name}}?(map)
@@ -40,6 +11,35 @@ record(Pos, x : Int32, y : Int32) do
   dir(right, x, y + 1, {'-', 'J', '7'})
   dir(up, x - 1, y, {'|', 'F', '7'})
   dir(down, x + 1, y, {'|', 'J', 'L'})
+
+  def neighbours(map, &block)
+    case map[x][y]
+    when '|'
+      up?(map) { |p| yield p }
+      down?(map) { |p| yield p }
+    when '-'
+      right?(map) { |p| yield p }
+      left?(map) { |p| yield p }
+    when 'F'
+      right?(map) { |p| yield p }
+      down?(map) { |p| yield p }
+    when '7'
+      left?(map) { |p| yield p }
+      down?(map) { |p| yield p }
+    when 'J'
+      left?(map) { |p| yield p }
+      up?(map) { |p| yield p }
+    when 'L'
+      right?(map) { |p| yield p }
+      up?(map) { |p| yield p }
+    when 'S'
+      left?(map) { |p| yield p }
+      right?(map) { |p| yield p }
+      up?(map) { |p| yield p }
+      down?(map) { |p| yield p }
+    else raise "unreachable"
+    end
+  end
 end
 
 input = File.read("input.day10").lines
@@ -58,7 +58,7 @@ while node = queue.shift?
   pos, steps = node
   pipe_loop[pos.x][pos.y] = true
   furthest = steps
-  neighbours(pos, input, input[pos.x][pos.y]) do |n|
+  pos.neighbours(input) do |n|
     queue << {n, steps + 1} unless pipe_loop[n.x][n.y]
   end
 end
