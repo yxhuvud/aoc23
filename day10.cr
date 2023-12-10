@@ -77,16 +77,10 @@ sum = input.size.times.sum do |i|
 
     case current
     when '-'
-    when 'F', 'L'
-      bend = current
-    when '7'
-      in_loop = !in_loop if bend == 'L'
-      bend = nil
-    when 'J'
-      in_loop = !in_loop if bend == 'F'
-      bend = nil
-    else
-      in_loop = !in_loop
+    when 'F', 'L' then bend = current
+    when '7'      then in_loop = !in_loop if bend == 'L'
+    when 'J'      then in_loop = !in_loop if bend == 'F'
+    else               in_loop = !in_loop
     end
     0
   end
