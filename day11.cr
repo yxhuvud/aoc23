@@ -1,6 +1,6 @@
 def expansion(values, empty)
   empty.sum do |v|
-    i = values.bsearch_index(&.>(v)).not_nil!
+    i = values.index! &.>(v)
     i*(values.size - i)
   end
 end
